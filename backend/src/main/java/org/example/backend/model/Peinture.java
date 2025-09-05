@@ -1,53 +1,75 @@
 package org.example.backend.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
 import java.util.Date;
-import java.util.List;
 
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Peinture {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(nullable = false)
     private String titre;
+    
+    @Column(length = 2000)
     private String description;
+    
+    @Column(nullable = false)
     private Double prix;
+    
+    @Column(nullable = false)
     private Integer stock;
-
-    @ElementCollection
-    private List<String> images;
-
+    
+    @Column
+    private String imageUrl;
+    
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateCreation;
-
-    @ManyToOne
-    @JoinColumn(name = "artiste_id")
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "artiste_id", nullable = false)
     private Artiste artiste;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Categorie categorie;
+    
+    
+    
+    private boolean disponible = true;
+    
+    public enum Categorie {
+        IMPRESSIONNISME("Impressionnisme"),
+        POST_IMPRESSIONNISME("Post-impressionnisme"),
+        SURREALISME("Surréalisme"),
+        ABSTRACTION("Abstraction"),
+        REALISME("Réalisme"),
+        CONTEMPORAIN("Contemporain"),
+        CLASSIQUE("Classique"),
+        MODERNE("Moderne");
+        
+        private final String libelle;
+        
+        Categorie(String libelle) {
+            this.libelle = libelle;
+        }
 
-    // Getters et setters
+        public String getLibelle() {
+            return libelle;
+        }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getTitre() { return titre; }
-    public void setTitre(String titre) { this.titre = titre; }
-
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-
-    public Double getPrix() { return prix; }
-    public void setPrix(Double prix) { this.prix = prix; }
-
-    public Integer getStock() { return stock; }
-    public void setStock(Integer stock) { this.stock = stock; }
-
-    public List<String> getImages() { return images; }
-    public void setImages(List<String> images) { this.images = images; }
-
-    public Date getDateCreation() { return dateCreation; }
-    public void setDateCreation(Date dateCreation) { this.dateCreation = dateCreation; }
-
-    public Artiste getArtiste() { return artiste; }
-    public void setArtiste(Artiste artiste) { this.artiste = artiste; }
+    }
+    
+    @PrePersist
+    protected void onCreate() {
+        dateCreation = new Date();
+    }
 }

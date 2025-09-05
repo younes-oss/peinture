@@ -1,0 +1,53 @@
+<div class="sidebar">
+  <!-- Logo -->
+  <div class="logo-container">
+    <div class="logo">
+      <span class="logo-text">Peinture</span>
+      <span class="logo-subtitle">GALERIE</span>
+    </div>
+  </div>
+
+  <!-- Navigation Links -->
+  <nav class="nav-links">
+    <a routerLink="/" 
+       routerLinkActive="active" 
+       [routerLinkActiveOptions]="{exact: true}"
+       class="nav-link">
+      <span class="active-indicator"></span>
+      ACCUEIL
+    </a>
+    
+    <a routerLink="/peintures" 
+       routerLinkActive="active" 
+       class="nav-link">
+      <span class="active-indicator"></span>
+      PEINTURES
+    </a>
+    
+    <a routerLink="/artistes" 
+       routerLinkActive="active" 
+       class="nav-link">
+      <span class="active-indicator"></span>
+      ARTISTES
+    </a>
+    
+    <a routerLink="/panier" 
+       routerLinkActive="active" 
+       class="nav-link">
+      <span class="active-indicator"></span>
+      PANIER
+    </a>
+    
+    <a routerLink="/commandes" 
+       routerLinkActive="active" 
+       class="nav-link">
+      <span class="active-indicator"></span>
+      COMMANDES
+    </a>
+  </nav>
+
+  <!-- Discount Button -->
+  <div class="discount-button">
+    <span>%Promo%</span>
+  </div>
+</div> 

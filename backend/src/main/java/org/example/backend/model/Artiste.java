@@ -1,49 +1,37 @@
 package org.example.backend.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
 import java.util.List;
 
 @Entity
+@Data
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class Artiste extends User {
+    
+    @Column(length = 1000)
     private String biographie;
+    
     private String boutique;
+    
+    @Column(nullable = false)
     private String specialite;
-
-    @OneToMany(mappedBy = "artiste")
+    
+    private String pays;
+    
+    private String ville;
+    
+    @OneToMany(mappedBy = "artiste", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Peinture> peintures;
+    
+    @Column(nullable = false)
+    private Integer nombreOeuvres = 0;
+    
 
-    // Getters et setters
-
-    public String getBiographie() {
-        return biographie;
-    }
-
-    public void setBiographie(String biographie) {
-        this.biographie = biographie;
-    }
-
-    public String getBoutique() {
-        return boutique;
-    }
-
-    public void setBoutique(String boutique) {
-        this.boutique = boutique;
-    }
-
-    public String getSpecialite() {
-        return specialite;
-    }
-
-    public void setSpecialite(String specialite) {
-        this.specialite = specialite;
-    }
-
-    public List<Peinture> getPeintures() {
-        return peintures;
-    }
-
-    public void setPeintures(List<Peinture> peintures) {
-        this.peintures = peintures;
-    }
 }
