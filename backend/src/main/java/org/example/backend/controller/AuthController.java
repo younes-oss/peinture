@@ -20,7 +20,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
         try {
-            return ResponseEntity.ok(authService.register(request).getToken());
+            return ResponseEntity.ok(authService.register(request));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -30,7 +30,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> authenticate(@RequestBody LoginRequest request) {
         try {
-            return ResponseEntity.ok(authService.authenticate(request).getToken());
+            return ResponseEntity.ok(authService.authenticate(request));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

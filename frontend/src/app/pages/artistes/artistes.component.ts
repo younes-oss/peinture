@@ -1,11 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { ArtisteCardComponent, Artiste } from '../../components/artiste/artiste-card/artiste-card.component';
+import { PaintingCardComponent } from '../../components/shared/painting-card/painting-card.component';
+import { PeintureService } from '../../services/peinture.service';
+import { Peinture } from '../../models/peinture.model';
 
 @Component({
   selector: 'app-artistes',
   standalone: true,
-  imports: [CommonModule, ArtisteCardComponent],
+  imports: [CommonModule, RouterLink, ArtisteCardComponent, PaintingCardComponent],
   template: `
     <div class="artistes-page">
       <div class="page-header">
@@ -18,6 +22,20 @@ import { ArtisteCardComponent, Artiste } from '../../components/artiste/artiste-
           *ngFor="let artiste of artistes" 
           [artiste]="artiste">
         </app-artiste-card>
+      </div>
+
+      <div class="actions">
+        <a routerLink="/dashboard/artiste/nouveau" class="btn-create">Créer peinture</a>
+      </div>
+
+      <div class="peintures-section">
+        <h2>Peintures récentes</h2>
+        <div class="peintures-grid" *ngIf="peintures.length; else noPaintings">
+          <app-painting-card *ngFor="let p of peintures" [peinture]="p"></app-painting-card>
+        </div>
+        <ng-template #noPaintings>
+          <p>Aucune peinture pour le moment.</p>
+        </ng-template>
       </div>
     </div>
   `,
@@ -47,9 +65,35 @@ import { ArtisteCardComponent, Artiste } from '../../components/artiste/artiste-
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
       gap: 24px;
     }
+
+    .actions {
+      display: flex;
+      justify-content: center;
+      margin: 32px 0;
+    }
+
+    .btn-create {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.25);
+    }
+
+    .peintures-section {
+      margin-top: 24px;
+    }
+
+    .peintures-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
   `]
 })
-export class ArtistesComponent {
+export class ArtistesComponent implements OnInit {
   artistes: Artiste[] = [
     {
       id: 1,
@@ -79,4 +123,16 @@ export class ArtistesComponent {
       pays: "Espagne"
     }
   ];
+
+  peintures: Peinture[] = [];
+
+  constructor(private peintureService: PeintureService) {}
+
+  ngOnInit(): void {
+    this.loadPeintures();
+  }
+
+  private loadPeintures(): void {
+    this.peintureService.getAllPeintures().subscribe(p => this.peintures = p);
+  }
 } 

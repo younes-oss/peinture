@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/peintures")
+@CrossOrigin(origins = "*")
 public class PeintureController {
     private final PeintureService peintureService;
 
@@ -55,4 +56,4 @@ public class PeintureController {
                 .body("Erreur lors de la récupération des peintures: " + e.getMessage());
         }
     }
-} 
+}

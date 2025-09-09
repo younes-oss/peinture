@@ -5,8 +5,6 @@ import { Component } from '@angular/core';
   selector: 'app-peintures',
   standalone: true,
   imports: [],
-  template:`<p>hhhhhhhh</p>
-
-  `
+  template:`<p>hhhhhhhh</p>`
 })
 export class PeinturesComponent {}
