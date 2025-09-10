@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
+import jakarta.persistence.ElementCollection;
 
 @Entity
 @Data
@@ -20,8 +21,8 @@ public class Panier {
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
     
-    @OneToMany(mappedBy = "panier", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<LigneCommande> lignes;
+    @ElementCollection
+    private List<PanierItem> items;
     
     private Double total = 0.0;
     
