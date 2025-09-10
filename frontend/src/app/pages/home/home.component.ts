@@ -61,7 +61,8 @@ import { RegisterComponent } from '../../components/auth/register/register.compo
           <div class="paintings-grid" *ngIf="featuredPaintings.length > 0; else loadingPaintings">
             <app-painting-card 
               *ngFor="let peinture of featuredPaintings" 
-              [peinture]="peinture">
+              [peinture]="peinture"
+              context="client">
             </app-painting-card>
           </div>
           <ng-template #loadingPaintings>

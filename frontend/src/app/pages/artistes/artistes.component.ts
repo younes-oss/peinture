@@ -5,6 +5,7 @@ import { ArtisteCardComponent, Artiste } from '../../components/artiste/artiste-
 import { PaintingCardComponent } from '../../components/shared/painting-card/painting-card.component';
 import { PeintureService } from '../../services/peinture.service';
 import { Peinture } from '../../models/peinture.model';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-artistes',
@@ -31,7 +32,12 @@ import { Peinture } from '../../models/peinture.model';
       <div class="peintures-section">
         <h2>Peintures récentes</h2>
         <div class="peintures-grid" *ngIf="peintures.length; else noPaintings">
-          <app-painting-card *ngFor="let p of peintures" [peinture]="p"></app-painting-card>
+          <app-painting-card 
+            *ngFor="let p of peintures" 
+            [peinture]="p"
+            context="artist"
+            (peintureDeleted)="onPeintureDeleted($event)">
+          </app-painting-card>
         </div>
         <ng-template #noPaintings>
           <p>Aucune peinture pour le moment.</p>
@@ -125,14 +131,25 @@ export class ArtistesComponent implements OnInit {
   ];
 
   peintures: Peinture[] = [];
+  isArtiste = false;
 
-  constructor(private peintureService: PeintureService) {}
+  constructor(
+    private peintureService: PeintureService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
+    this.isArtiste = this.authService.isArtiste();
     this.loadPeintures();
   }
 
   private loadPeintures(): void {
     this.peintureService.getAllPeintures().subscribe(p => this.peintures = p);
+  }
+
+  onPeintureDeleted(peintureId: number): void {
+    this.peintureService.deletePeinture(peintureId).subscribe(() => {
+      this.loadPeintures(); // Recharger la liste après suppression
+    });
   }
 } 

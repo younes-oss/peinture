@@ -1,5 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { Peinture } from '../../../models/peinture.model';
 
 @Component({
@@ -39,7 +40,27 @@ import { Peinture } from '../../../models/peinture.model';
           <span class="stock" *ngIf="peinture.stock > 0">{{ peinture.stock }} en stock</span>
           <span class="out-of-stock" *ngIf="peinture.stock === 0">Épuisé</span>
         </div>
-        <button class="btn-add-to-cart" 
+        <!-- Boutons pour artiste -->
+        <div *ngIf="context === 'artist'" class="artist-actions">
+          <button class="btn-edit" (click)="editPeinture($event)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="m18.5 2.5 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Modifier
+          </button>
+          <button class="btn-delete" (click)="deletePeinture($event)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M3 6h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Supprimer
+          </button>
+        </div>
+        
+        <!-- Bouton panier pour clients -->
+        <button *ngIf="context === 'client'" class="btn-add-to-cart" 
                 [disabled]="peinture.stock === 0 || !peinture.disponible"
                 (click)="addToCart($event)">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -225,11 +246,54 @@ import { Peinture } from '../../../models/peinture.model';
       background: #6c757d;
       cursor: not-allowed;
     }
+
+    .artist-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-edit, .btn-delete {
+      flex: 1;
+      border: none;
+      border-radius: 12px;
+      padding: 0.75rem 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-edit {
+      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      color: white;
+    }
+
+    .btn-edit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+    }
+
+    .btn-delete {
+      background: linear-gradient(135deg, #dc3545 0%, #e74c3c 100%);
+      color: white;
+    }
+
+    .btn-delete:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(220, 53, 69, 0.3);
+    }
   `]
 })
 export class PaintingCardComponent {
   @Input() peinture!: Peinture;
+  @Output() peintureDeleted = new EventEmitter<number>();
   isFavorite = false;
+  @Input() context: 'client' | 'artist' = 'client';
+
+  constructor(private router: Router) {}
 
   toggleFavorite(event: Event) {
     event.stopPropagation();
@@ -246,6 +310,18 @@ export class PaintingCardComponent {
     event.stopPropagation();
     // TODO: Implémenter l'ajout au panier
     console.log('Ajouter au panier:', this.peinture.titre);
+  }
+
+  editPeinture(event: Event) {
+    event.stopPropagation();
+    this.router.navigateByUrl(`/dashboard/artiste/${this.peinture.id}`);
+  }
+
+  deletePeinture(event: Event) {
+    event.stopPropagation();
+    if (confirm(`Supprimer "${this.peinture.titre}" ?`)) {
+      this.peintureDeleted.emit(this.peinture.id);
+    }
   }
 
   getYear(dateString: string): string {
