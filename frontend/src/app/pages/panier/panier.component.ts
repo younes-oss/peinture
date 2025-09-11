@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PanierItemComponent, PanierItem } from '../../components/panier/panier-item/panier-item.component';
+import { PanierService, PanierDto, PanierItemDto } from '../../services/panier.service';
 
 @Component({
   selector: 'app-panier',
@@ -152,46 +153,65 @@ import { PanierItemComponent, PanierItem } from '../../components/panier/panier-
     }
   `]
 })
-export class PanierComponent {
-  panierItems: PanierItem[] = [
-    {
-      id: 1,
-      peinture: {
-        id: 1,
-        titre: "Le Pont de l'Art",
-        artiste: "Claude Monet",
-        prix: 2500,
-        imageUrl: "https://via.placeholder.com/300x200/4A90E2/FFFFFF?text=Peinture+1"
+export class PanierComponent implements OnInit {
+  panierItems: PanierItem[] = [];
+  panier: PanierDto | null = null;
+
+  constructor(private panierService: PanierService) {}
+
+  ngOnInit(): void {
+    this.loadPanier();
+  }
+
+  loadPanier(): void {
+    this.panierService.getMyPanier().subscribe({
+      next: (panier: PanierDto) => {
+        this.panier = panier;
+        this.panierItems = this.convertToPanierItems(panier.items);
       },
-      quantite: 1
-    },
-    {
-      id: 2,
+      error: (err) => {
+        console.error('Erreur chargement panier:', err);
+        this.panierItems = [];
+      }
+    });
+  }
+
+  private convertToPanierItems(items: PanierItemDto[]): PanierItem[] {
+    return items.map((item, index) => ({
+      id: index + 1, // ID temporaire pour le composant
       peinture: {
-        id: 2,
-        titre: "La Nuit Étoilée",
-        artiste: "Vincent van Gogh",
-        prix: 3200,
-        imageUrl: "https://via.placeholder.com/300x200/8B4513/FFFFFF?text=Peinture+2"
+        id: item.peintureId,
+        titre: item.peintureTitre,
+        artiste: '', // Pas d'info artiste dans PanierItemDto
+        prix: item.prixUnitaire,
+        imageUrl: item.imageUrl
       },
-      quantite: 2
-    }
-  ];
+      quantite: item.quantite
+    }));
+  }
 
   updateQuantite(change: {id: number, quantite: number}) {
     const item = this.panierItems.find(i => i.id === change.id);
     if (item) {
-      item.quantite = change.quantite;
+      this.panierService.updateQuantity(item.peinture.id, change.quantite).subscribe({
+        next: () => this.loadPanier(),
+        error: (err) => console.error('Erreur mise à jour quantité:', err)
+      });
     }
   }
 
   removeItem(id: number) {
-    this.panierItems = this.panierItems.filter(item => item.id !== id);
+    const item = this.panierItems.find(i => i.id === id);
+    if (item) {
+      this.panierService.removeItem(item.peinture.id).subscribe({
+        next: () => this.loadPanier(),
+        error: (err) => console.error('Erreur suppression:', err)
+      });
+    }
   }
 
   getSousTotal(): number {
-    return this.panierItems.reduce((total, item) => 
-      total + (item.peinture.prix * item.quantite), 0);
+    return this.panier?.total || 0;
   }
 
   getFraisLivraison(): number {

@@ -20,8 +20,8 @@ public class Commande {
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
     
-    @OneToMany(mappedBy = "commande", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<LigneCommande> lignes;
+    @ElementCollection
+    private List<PanierItem> articles;
     
     @Column(nullable = false)
     private Double total;

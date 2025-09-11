@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Peinture } from '../../../models/peinture.model';
+import { PanierService } from '../../../services/panier.service';
 
 @Component({
   selector: 'app-painting-card',
@@ -40,6 +41,7 @@ import { Peinture } from '../../../models/peinture.model';
           <span class="stock" *ngIf="peinture.stock > 0">{{ peinture.stock }} en stock</span>
           <span class="out-of-stock" *ngIf="peinture.stock === 0">Épuisé</span>
         </div>
+        <div *ngIf="context === 'client' && added" class="added-badge">Ajouté !</div>
         <!-- Boutons pour artiste -->
         <div *ngIf="context === 'artist'" class="artist-actions">
           <button class="btn-edit" (click)="editPeinture($event)">
@@ -221,6 +223,17 @@ import { Peinture } from '../../../models/peinture.model';
       color: #dc3545;
     }
 
+    .added-badge {
+      display: inline-block;
+      background: #28a745;
+      color: #fff;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
     .btn-add-to-cart {
       width: 100%;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -292,8 +305,9 @@ export class PaintingCardComponent {
   @Output() peintureDeleted = new EventEmitter<number>();
   isFavorite = false;
   @Input() context: 'client' | 'artist' = 'client';
+  added = false;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private panierService: PanierService) {}
 
   toggleFavorite(event: Event) {
     event.stopPropagation();
@@ -308,8 +322,14 @@ export class PaintingCardComponent {
 
   addToCart(event: Event) {
     event.stopPropagation();
-    // TODO: Implémenter l'ajout au panier
-    console.log('Ajouter au panier:', this.peinture.titre);
+    this.panierService.addItem(this.peinture.id, 1).subscribe({
+      next: () => {
+        this.added = true;
+        setTimeout(() => { this.added = false; }, 1500);
+        this.router.navigateByUrl('/panier');
+      },
+      error: (err) => console.error('Erreur ajout panier:', err)
+    });
   }
 
   editPeinture(event: Event) {
