@@ -8,6 +8,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/peintures")
 @CrossOrigin(origins = "*")
@@ -54,6 +56,46 @@ public class PeintureController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("Erreur lors de la récupération des peintures: " + e.getMessage());
+        }
+    }
+
+    // Lister les peintures de l'artiste connecté (réservé aux artistes)
+    @GetMapping("/my-artworks")
+    public ResponseEntity<?> getMyArtworks() {
+        System.out.println("GET /my-artworks endpoint called");
+        
+        // Vérifier si l'utilisateur est connecté
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            System.out.println("User not authenticated");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body("Vous devez être connecté pour voir vos œuvres");
+        }
+
+        System.out.println("User authenticated: " + auth.getName());
+        System.out.println("User authorities: " + auth.getAuthorities());
+
+        // Vérifier si l'utilisateur est un artiste
+        boolean isArtiste = auth.getAuthorities().stream()
+            .anyMatch(authority -> authority.getAuthority().equals("ROLE_ARTISTE"));
+
+        if (!isArtiste) {
+            System.out.println("User is not an artist");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body("Seuls les artistes peuvent voir leurs œuvres");
+        }
+
+        System.out.println("User is an artist, fetching artworks...");
+        
+        try {
+            List<PeintureDto> artworks = peintureService.findByCurrentArtiste();
+            System.out.println("Returning " + artworks.size() + " artworks");
+            return ResponseEntity.ok(artworks);
+        } catch (Exception e) {
+            System.err.println("Error fetching artworks: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Erreur lors de la récupération de vos œuvres: " + e.getMessage());
         }
     }
 

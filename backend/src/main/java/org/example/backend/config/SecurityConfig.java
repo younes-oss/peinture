@@ -41,6 +41,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/peintures/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/artistes/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/artiste/**").hasRole("ARTISTE")
                         .requestMatchers("/api/client/**").hasRole("CLIENT")

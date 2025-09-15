@@ -72,10 +72,58 @@ public class PeintureService {
             .toList();
     }
 
+    // Trouver les peintures de l'artiste connecté
+    public List<PeintureDto> findByCurrentArtiste() {
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String userEmail = auth.getName();
+            
+            System.out.println("Finding artworks for user: " + userEmail);
+            
+            Artiste currentArtiste = artisteRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("Artiste non trouvé"));
+            
+            System.out.println("Found artist: " + currentArtiste.getId() + " - " + currentArtiste.getPrenom() + " " + currentArtiste.getNom());
+            
+            List<Peinture> peintures = peintureRepository.findByArtiste(currentArtiste);
+            System.out.println("Found " + peintures.size() + " artworks for this artist");
+            
+            // Debug: also check all artworks in database
+            List<Peinture> allPeintures = peintureRepository.findAll();
+            System.out.println("Total artworks in database: " + allPeintures.size());
+            
+            for (Peinture p : allPeintures) {
+                System.out.println("Artwork: " + p.getTitre() + " - Artist ID: " + 
+                    (p.getArtiste() != null ? p.getArtiste().getId() : "null") + 
+                    " - Artist Email: " + 
+                    (p.getArtiste() != null ? p.getArtiste().getEmail() : "null"));
+            }
+            
+            return peintures.stream()
+                .map(peintureMapper::toDto)
+                .toList();
+        } catch (Exception e) {
+            System.err.println("Error in findByCurrentArtiste: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
     // Mettre à jour une peinture
     public PeintureDto updatePeinture(Long id, PeintureDto dto) {
         Peinture existing = peintureRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Peinture non trouvée"));
+
+        // Vérifier que l'artiste connecté est propriétaire de cette peinture
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = auth.getName();
+        
+        Artiste currentArtiste = artisteRepository.findByEmail(userEmail)
+            .orElseThrow(() -> new RuntimeException("Artiste non trouvé"));
+        
+        if (!existing.getArtiste().getId().equals(currentArtiste.getId())) {
+            throw new RuntimeException("Vous ne pouvez modifier que vos propres œuvres");
+        }
 
         // Convertir le DTO en entité (le mapper ignore id, dateCreation, artiste, categorie)
         Peinture updated = peintureMapper.toEntity(dto);
@@ -103,9 +151,20 @@ public class PeintureService {
 
     // Supprimer une peinture
     public void deletePeinture(Long id) {
-        if (!peintureRepository.existsById(id)) {
-            throw new RuntimeException("Peinture non trouvée");
+        Peinture existing = peintureRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Peinture non trouvée"));
+        
+        // Vérifier que l'artiste connecté est propriétaire de cette peinture
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = auth.getName();
+        
+        Artiste currentArtiste = artisteRepository.findByEmail(userEmail)
+            .orElseThrow(() -> new RuntimeException("Artiste non trouvé"));
+        
+        if (!existing.getArtiste().getId().equals(currentArtiste.getId())) {
+            throw new RuntimeException("Vous ne pouvez supprimer que vos propres œuvres");
         }
+        
         peintureRepository.deleteById(id);
     }
 

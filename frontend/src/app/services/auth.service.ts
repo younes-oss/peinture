@@ -7,7 +7,7 @@ import { LoginRequest, RegisterRequest, AuthResponse, User, AuthState } from '..
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/api';
+  private apiUrl = 'http://localhost:8081/api';
   private readonly TOKEN_KEY = 'auth_token';
   private readonly USER_KEY = 'auth_user';
 

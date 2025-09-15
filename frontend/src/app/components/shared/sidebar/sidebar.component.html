@@ -1,53 +1,97 @@
-<div class="sidebar">
-  <!-- Logo -->
-  <div class="logo-container">
-    <div class="logo">
+<div class="sidebar" [class.mobile-open]="isMobileMenuOpen">
+  <!-- Mobile Header avec bouton hamburger -->
+  <div class="mobile-header">
+    <div class="mobile-logo">
       <span class="logo-text">Peinture</span>
       <span class="logo-subtitle">GALERIE</span>
     </div>
+    <button class="hamburger-btn" (click)="toggleMobileMenu()" [class.active]="isMobileMenuOpen">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
   </div>
 
-  <!-- Navigation Links -->
-  <nav class="nav-links">
-    <a routerLink="/" 
-       routerLinkActive="active" 
-       [routerLinkActiveOptions]="{exact: true}"
-       class="nav-link">
-      <span class="active-indicator"></span>
-      ACCUEIL
-    </a>
-    
-    <a routerLink="/peintures" 
-       routerLinkActive="active" 
-       class="nav-link">
-      <span class="active-indicator"></span>
-      PEINTURES
-    </a>
-    
-    <a routerLink="/artistes" 
-       routerLinkActive="active" 
-       class="nav-link">
-      <span class="active-indicator"></span>
-      ARTISTES
-    </a>
-    
-    <a routerLink="/panier" 
-       routerLinkActive="active" 
-       class="nav-link">
-      <span class="active-indicator"></span>
-      PANIER
-    </a>
-    
-    <a routerLink="/commandes" 
-       routerLinkActive="active" 
-       class="nav-link">
-      <span class="active-indicator"></span>
-      COMMANDES
-    </a>
-  </nav>
+  <!-- Overlay pour mobile -->
+  <div class="mobile-overlay" 
+       [class.active]="isMobileMenuOpen" 
+       (click)="closeMobileMenu()"></div>
 
-  <!-- Discount Button -->
-  <div class="discount-button">
-    <span>%Promo%</span>
+  <!-- Navigation content -->
+  <div class="sidebar-content">
+    <!-- Logo pour desktop -->
+    <div class="logo-container desktop-only">
+      <div class="logo">
+        <span class="logo-text">Peinture</span>
+        <span class="logo-subtitle">GALERIE</span>
+      </div>
+    </div>
+
+    <!-- Navigation Links -->
+    <nav class="nav-links">
+      <a routerLink="/" 
+         routerLinkActive="active" 
+         [routerLinkActiveOptions]="{exact: true}"
+         class="nav-link"
+         (click)="handleNavigation('/', $event)">
+        <span class="active-indicator"></span>
+        <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        </svg>
+        ACCUEIL
+      </a>
+      
+      <a routerLink="/peintures" 
+         routerLinkActive="active" 
+         class="nav-link"
+         [class.disabled]="isArtiste() && !isRouteAllowed('/peintures')"
+         (click)="handleNavigation('/peintures', $event)">
+        <span class="active-indicator"></span>
+        <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+        </svg>
+        PEINTURES
+      </a>
+      
+      <a routerLink="/artistes" 
+         routerLinkActive="active" 
+         class="nav-link"
+         (click)="handleNavigation('/artistes', $event)">
+        <span class="active-indicator"></span>
+        <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h2.5l-2.54-7.63A1.5 1.5 0 0 0 18.54 8H16c-.8 0-1.54.37-2.01.99L12 13l-2.01-4.01A2.01 2.01 0 0 0 8 8H5.46c-.8 0-1.49.59-1.63 1.37L1.29 16H4v6h2v-6h2.5l2.5-5 2.5 5H16v6h4Z"/>
+        </svg>
+        ARTISTES
+      </a>
+      
+      <a routerLink="/panier" 
+         routerLinkActive="active" 
+         class="nav-link"
+         [class.disabled]="isArtiste() && !isRouteAllowed('/panier')"
+         (click)="handleNavigation('/panier', $event)">
+        <span class="active-indicator"></span>
+        <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+        </svg>
+        PANIER
+      </a>
+      
+      <a routerLink="/commandes" 
+         routerLinkActive="active" 
+         class="nav-link"
+         [class.disabled]="isArtiste() && !isRouteAllowed('/commandes')"
+         (click)="handleNavigation('/commandes', $event)">
+        <span class="active-indicator"></span>
+        <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+        </svg>
+        COMMANDES
+      </a>
+    </nav>
+
+    <!-- Discount Button -->
+    <div class="discount-button">
+      <span>%Promo%</span>
+    </div>
   </div>
 </div> 

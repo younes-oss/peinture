@@ -2,10 +2,110 @@
   width: 250px;
   height: 100vh;
   background-color: white;
-  padding: 20px;
   display: flex;
   flex-direction: column;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  transition: transform 0.3s ease;
+}
+
+/* Mobile Header */
+.mobile-header {
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1001;
+  height: 70px;
+}
+
+.mobile-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.mobile-logo .logo-text {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+}
+
+.mobile-logo .logo-subtitle {
+  font-size: 10px;
+  color: #666;
+  letter-spacing: 1px;
+}
+
+/* Hamburger Button */
+.hamburger-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.3s ease;
+}
+
+.hamburger-btn span {
+  width: 25px;
+  height: 3px;
+  background-color: #333;
+  transition: all 0.3s ease;
+  transform-origin: center;
+}
+
+.hamburger-btn.active span:nth-child(1) {
+  transform: rotate(45deg) translate(6px, 6px);
+}
+
+.hamburger-btn.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-btn.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(6px, -6px);
+}
+
+/* Mobile Overlay */
+.mobile-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.mobile-overlay.active {
+  opacity: 1;
+}
+
+/* Sidebar Content */
+.sidebar-content {
+  height: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Logo Styles */
@@ -55,7 +155,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 8px;
 }
 
 .nav-link {
@@ -66,31 +166,47 @@
   font-family: 'Arial', sans-serif;
   font-size: 14px;
   font-weight: 500;
-  padding: 10px 0;
+  padding: 12px 16px;
   position: relative;
-  transition: color 0.3s ease;
+  transition: all 0.3s ease;
+  border-radius: 12px;
+  gap: 12px;
+  min-height: 48px; /* Meilleur pour le tactile */
 }
 
 .nav-link:hover {
+  background-color: #f8f9fa;
   color: #fbbf24;
 }
 
 .nav-link.active {
-  color: #fbbf24;
+  background-color: #fbbf24;
+  color: white;
+}
+
+.nav-link.disabled {
+  color: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.nav-link.disabled:hover {
+  background-color: transparent;
+  color: #9ca3af;
+}
+
+.nav-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
 }
 
 .active-indicator {
-  position: absolute;
-  left: -20px;
-  width: 3px;
-  height: 20px;
-  background-color: transparent;
-  border-radius: 2px;
-  transition: background-color 0.3s ease;
+  display: none; /* Masqué car nous utilisons le background */
 }
 
-.nav-link.active .active-indicator {
-  background-color: #fbbf24;
+.nav-link.disabled .active-indicator {
+  background-color: transparent !important;
 }
 
 /* Discount Button */
@@ -115,4 +231,94 @@
 
 .discount-button span:hover {
   background-color: #f59e0b;
+}
+
+/* Utility Classes */
+.desktop-only {
+  display: block;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    width: 280px;
+    z-index: 1000;
+  }
+  
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+  
+  .mobile-header {
+    display: flex;
+  }
+  
+  .mobile-overlay {
+    display: block;
+  }
+  
+  .desktop-only {
+    display: none;
+  }
+  
+  .sidebar-content {
+    padding-top: 20px;
+  }
+  
+  .nav-links {
+    gap: 4px;
+  }
+  
+  .nav-link {
+    padding: 16px 20px;
+    font-size: 16px;
+    min-height: 56px;
+    gap: 16px;
+  }
+  
+  .nav-icon {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .discount-button {
+    margin-bottom: 80px; /* Espace pour le bas de l'écran */
+  }
+}
+
+/* Tablette */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .sidebar {
+    width: 220px;
+  }
+  
+  .nav-link {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  
+  .logo-text {
+    font-size: 24px;
+  }
+}
+
+/* Très petits écrans */
+@media (max-width: 480px) {
+  .sidebar {
+    width: 260px;
+  }
+  
+  .mobile-header {
+    padding: 0.75rem 1rem;
+    height: 60px;
+  }
+  
+  .mobile-logo .logo-text {
+    font-size: 18px;
+  }
+  
+  .mobile-logo .logo-subtitle {
+    font-size: 9px;
+  }
 } 

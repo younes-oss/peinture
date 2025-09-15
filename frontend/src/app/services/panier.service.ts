@@ -21,7 +21,7 @@ export interface PanierDto {
 
 @Injectable({ providedIn: 'root' })
 export class PanierService {
-  private apiUrl = 'http://localhost:8080/api/panier';
+  private apiUrl = 'http://localhost:8081/api/panier';
 
   constructor(private http: HttpClient) {}
 

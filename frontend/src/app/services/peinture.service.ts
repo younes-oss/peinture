@@ -7,12 +7,16 @@ import { Peinture } from '../models/peinture.model';
   providedIn: 'root'
 })
 export class PeintureService {
-  private apiUrl = 'http://localhost:8080/api';
+  private apiUrl = 'http://localhost:8081/api';
 
   constructor(private http: HttpClient) { }
 
   getAllPeintures(): Observable<Peinture[]> {
     return this.http.get<Peinture[]>(`${this.apiUrl}/peintures`);
+  }
+
+  getMyArtworks(): Observable<Peinture[]> {
+    return this.http.get<Peinture[]>(`${this.apiUrl}/peintures/my-artworks`);
   }
 
   getPeintureById(id: number): Observable<Peinture> {

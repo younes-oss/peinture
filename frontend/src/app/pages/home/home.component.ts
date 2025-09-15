@@ -347,16 +347,91 @@ import { RegisterComponent } from '../../components/auth/register/register.compo
         padding: 0 1rem;
       }
 
-      .section-header h2 {
+      .sectionheader h2 {
         font-size: 2rem;
+      }
+      
+      .section-header p {
+        font-size: 1rem;
+      }
+
+      .categories-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      
+      .paintings-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+      }
+      
+      .artists-preview {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      
+      .artist-card {
+        padding: 1.5rem;
       }
 
       .newsletter-form {
         flex-direction: column;
+        gap: 1rem;
       }
 
       .newsletter-input, .newsletter-btn {
         border-radius: 12px;
+      }
+      
+      .newsletter-content h2 {
+        font-size: 2rem;
+      }
+      
+      .newsletter-content p {
+        font-size: 1rem;
+      }
+      
+      .btn-view-all {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.875rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .container {
+        padding: 0 0.75rem;
+      }
+      
+      .section-header {
+        margin-bottom: 2rem;
+      }
+
+      .section-header h2 {
+        font-size: 1.75rem;
+      }
+      
+      .categories-section,
+      .featured-section,
+      .artists-section,
+      .newsletter-section {
+        padding: 3rem 0;
+      }
+      
+      .paintings-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .artist-card {
+        padding: 1rem;
+      }
+      
+      .artist-avatar {
+        width: 60px;
+        height: 60px;
+      }
+      
+      .newsletter-content h2 {
+        font-size: 1.75rem;
       }
     }
   `]

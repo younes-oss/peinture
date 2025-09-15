@@ -10,7 +10,27 @@
 
 .main-content {
   flex: 1;
+  margin-left: 250px; /* Largeur de la sidebar desktop */
   padding: 20px;
   background-color: #f8f9fa;
   overflow-y: auto;
+  transition: margin-left 0.3s ease;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+    padding-top: 90px; /* Hauteur du header mobile + padding */
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 15px;
+  }
+}
+
+/* Tablette */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .main-content {
+    margin-left: 220px; /* Largeur réduite sur tablette */
+  }
 }
