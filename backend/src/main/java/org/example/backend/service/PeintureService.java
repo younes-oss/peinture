@@ -168,8 +168,4 @@ public class PeintureService {
         peintureRepository.deleteById(id);
     }
 
-
-
-
-
 }  

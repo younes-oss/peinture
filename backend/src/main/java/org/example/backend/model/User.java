@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
+@Table(name = "users")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Data
 @NoArgsConstructor
