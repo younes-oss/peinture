@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  # Base de données MySQL
+  database:
+    image: mysql:8.0
+    container_name: peinture-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: peinture_db
+      MYSQL_USER: peinture_user
+      MYSQL_PASSWORD: peinture_password
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - peinture-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  # Backend Spring Boot
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: peinture-backend
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://database:3306/peinture_db?useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: peinture_user
+      SPRING_DATASOURCE_PASSWORD: peinture_password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      JWT_SECRET: mySecretKeyForProduction123456789012345678901234567890
+      JWT_EXPIRATION: 86400000
+    ports:
+      - "8080:8080"
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - peinture-network
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+
+networks:
+  peinture-network:
+    driver: bridge
